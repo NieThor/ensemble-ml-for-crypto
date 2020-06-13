@@ -1,5 +1,7 @@
 import pandas as pd
 
+import time
+
 
 def resample_data(df: pd.DataFrame, resample_type=None):
     resampled_df = pd.DataFrame(data=None, columns=df.columns)
@@ -20,7 +22,7 @@ def resample_data(df: pd.DataFrame, resample_type=None):
                 low_ = row['low'] if row['low'] < low_ else low_
                 high_ = row['high'] if row['high'] > high_ else high_
                 close_ = row['close']
-                volume_\
+                volume_ \
                     += row['volume']
             else:
                 resampled_df = resampled_df.append({'open': open_,

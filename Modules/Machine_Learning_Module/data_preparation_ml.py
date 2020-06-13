@@ -1,19 +1,29 @@
 import pandas as pd
+import numpy as np
 
 
 def prepare_data(df: pd.DataFrame):
-    scaled_df = feature_scale(df)
-    train, test = split_dataset(scaled_df)
+    df = feature_scale(df)
+    df = get_target_data(df)
 
-    return train, test
+    return df
+
+
+def get_target_data(df: pd.DataFrame):
+    fee = 0.00075
+    df['target'] = np.nan
+    df['target'][df['close'].shift(1) * (1 + fee) < df['close'] * (1 - fee)] = 0
+    df['target'][df['close'].shift(1) * (1 + fee) > df['close'] * (1 - fee)] = 1
+    df = df[200:]
+    while df['target'].isnull().values.any():
+        df['target'][df['close'].shift(1) * (1 + fee) == df['close'] * (1 - fee)] = \
+            df['target'].shift(1)[df['close'].shift(1) * (1 + fee) == df['close'] * (1 - fee)]
+    return df
 
 
 def feature_scale(df: pd.DataFrame):
-    scaled_df = df.copy()
-    return scaled_df
+    # normalize dataframe
+    df = (df - df.mean()) / df.std()
 
+    return df
 
-def split_dataset(df: pd.DataFrame):
-    train = df
-    test = df
-    return train, test
