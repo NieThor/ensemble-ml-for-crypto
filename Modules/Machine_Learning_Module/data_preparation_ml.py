@@ -12,6 +12,7 @@ def prepare_data(df: pd.DataFrame):
 def get_target_data(df: pd.DataFrame):
     fee = 0.00075
     df['target'] = np.nan
+
     df['target'][df['close'].shift(1) * (1 + fee) < df['close'] * (1 - fee)] = 0
     df['target'][df['close'].shift(1) * (1 + fee) > df['close'] * (1 - fee)] = 1
     df = df[200:]
